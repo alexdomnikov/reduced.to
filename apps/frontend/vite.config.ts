@@ -16,7 +16,10 @@ export default defineConfig(({ mode }) => {
     cacheDir: '../../node_modules/.vite/apps/frontend',
     plugins: [
       qwikNxVite(),
-      qwikCity(),
+      qwikCity({
+        routesDir: path.resolve(__dirname, 'src/routes'),
+        trailingSlash: false,
+      }),
       qwikVite({
         client: {
           outDir: '../../dist/apps/frontend/client',
