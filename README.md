@@ -1,5 +1,37 @@
 <a name="readme-top"></a>
 
+## 🔐 Ephemeral Notes
+
+**A stateless, self-destructing ephemeral message feature built using AI-assisted development.**
+
+<div align="center">
+<img src="docs/ephemeral_notes_flow.png" width="600">
+</div>
+
+### The Concept
+
+Compress a message directly into a URL hash, shorten that URL through the existing pipeline, and let Redis TTL handle automatic expiration after 30 minutes. Zero permanent storage, zero database schema changes.
+
+### What I Built (And How)
+
+**My contributions:**
+- **System design**: Recognized that existing Redis expiration logic could be repurposed for ephemeral messaging without touching the database layer
+- **Security considerations**: XSS protection via plain-text rendering; clear documentation that lz-string is compression, not encryption
+- **GTM positioning**: Framed as a "professional-grade pastebin" for enterprise ephemeral collaboration
+- **Test specification**: Unit tests for compression determinism with special characters
+
+**AI-assisted execution:** I didn't know TypeScript, Qwik, or NestJS when I started. I used Claude to learn the codebase architecture, understand Qwik's resumability model, and study NestJS patterns—then engineered prompts that preemptively addressed framework-specific failure modes (QRL serialization errors, SSR hydration crashes).
+
+The prompts in `/docs` are the final versions. Getting there required significant iteration: hitting bugs, understanding why, refining my mental model, and restructuring prompts accordingly.
+
+### Documentation
+
+- [Implementation Prompts](docs/Demo_Build_Prompts.pdf) — The structured prompts used to build each component
+- [Ramp Process](docs/Ramp_Process_Illustrative_Prompts.pdf) — How I used AI to learn the codebase before building
+- [Architecture & GTM Strategy](docs/Reduced_To_Ephemeral_Notes.pdf) — System design decisions and go-to-market positioning
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 <!-- PROJECT SHIELDS -->
 <div align="center">
 
@@ -39,6 +71,7 @@
       <a href="#-about-the-project">🌐 About The Project</a>
       <ul>
         <li><a href="#-built-with">🔥 Built With</a></li>
+        <li><a href="#-ephemeral-notes">🫥 Ephemeral Notes</a></li>
       </ul>
     </li>
     <li>
