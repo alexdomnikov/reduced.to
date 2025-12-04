@@ -70,7 +70,7 @@ export const TemporaryLinks = component$(() => {
   const links = useSignal<TempLink[]>([]);
   const input = useSignal('');
   const isInputDisabled = useSignal(false);
-  const isSecretNoteMode = useSignal(false);
+  const isEphemeralNoteMode = useSignal(false);
   const secretNote = useSignal('');
   const interactedLink = useSignal<TempLink | null>(null);
   const copiedLinkKey = useSignal<string>('');
@@ -81,7 +81,7 @@ export const TemporaryLinks = component$(() => {
     isInputDisabled.value = links.value.length >= MAX_NUMBER_OF_LINKS;
 
     if (location.url.searchParams.get('mode') === 'note') {
-      isSecretNoteMode.value = true;
+      isEphemeralNoteMode.value = true;
     }
   });
 
@@ -166,28 +166,28 @@ export const TemporaryLinks = component$(() => {
           <button
             type="button"
             class={`flex-1 rounded-full px-3 py-1 text-sm font-medium border ${
-              !isSecretNoteMode.value
+              !isEphemeralNoteMode.value
                 ? 'bg-blue-600 text-white border-blue-600'
                 : 'bg-base-100 text-gray-700 dark:bg-slate-800 dark:text-gray-200 border-base-200'
             }`}
-            onClick$={() => (isSecretNoteMode.value = false)}
+            onClick$={() => (isEphemeralNoteMode.value = false)}
           >
             Shorten URL
           </button>
           <button
             type="button"
             class={`flex-1 rounded-full px-3 py-1 text-sm font-medium border ${
-              isSecretNoteMode.value
+              isEphemeralNoteMode.value
                 ? 'bg-blue-600 text-white border-blue-600'
                 : 'bg-base-100 text-gray-700 dark:bg-slate-800 dark:text-gray-200 border-base-200'
             }`}
-            onClick$={() => (isSecretNoteMode.value = true)}
+            onClick$={() => (isEphemeralNoteMode.value = true)}
           >
             Ephemeral Note
           </button>
         </div>
 
-        {isSecretNoteMode.value && (
+        {isEphemeralNoteMode.value && (
           <div class="mb-3">
             <textarea
               class="w-full rounded-md border border-base-200 bg-base-100 p-2.5 text-sm focus:outline-none dark:bg-slate-800"
@@ -202,7 +202,7 @@ export const TemporaryLinks = component$(() => {
         <div
           class={`flex w-full items-center dark:bg-slate-800 rounded-md shadow-lg bg-base-100 border border-base-200 p-2 ${
             createTempLink.value?.message ? 'border border-red-500' : ''
-          } ${isInputDisabled.value && !isSecretNoteMode.value ? 'bg-gray-200 cursor-not-allowed border-none' : ''}`}
+          } ${isInputDisabled.value && !isEphemeralNoteMode.value ? 'bg-gray-200 cursor-not-allowed border-none' : ''}`}
         >
           <input
             class="w-full p-2.5 text-sm focus:outline-none dark:bg-slate-800"
@@ -211,8 +211,8 @@ export const TemporaryLinks = component$(() => {
             value={input.value}
             onInput$={(e) => (input.value = (e.target as HTMLInputElement).value)}
             onKeyPress$={handleInputKeyPress}
-            readOnly={isSecretNoteMode.value}
-            disabled={isInputDisabled.value && !isSecretNoteMode.value}
+            readOnly={isEphemeralNoteMode.value}
+            disabled={isInputDisabled.value && !isEphemeralNoteMode.value}
           />
           <button
             class={`rounded-full p-2.5 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-700 focus:outline-none focus:ring focus:border-gray-300 ml-2 ${
