@@ -1,4 +1,4 @@
-import { component$, useSignal, $, QwikKeyboardEvent, useVisibleTask$ } from '@builder.io/qwik';
+import { component$, useSignal, $, QwikKeyboardEvent, QwikChangeEvent, useVisibleTask$ } from '@builder.io/qwik';
 import {
   HiRocketLaunchOutline,
   HiClipboardDocumentOutline,
@@ -6,13 +6,14 @@ import {
   HiCheckOutline,
   HiTrashOutline,
 } from '@qwikest/icons/heroicons';
-import { Link, globalAction$, server$ } from '@builder.io/qwik-city';
+import { Link, globalAction$, server$, useLocation } from '@builder.io/qwik-city';
 import { LuLoader } from '@qwikest/icons/lucide';
 import { copyToClipboard, normalizeUrl } from '../../utils';
 import { getFavicon, getLinkFromKey } from './utils';
 import { QR_CODE_DIALOG_ID, QrCodeDialog } from './qr-code-dialog/qr-code-dialog';
 import { LinkPlaceholder } from './link-placeholder/link-placeholder';
 import { useToaster } from '../toaster/toaster';
+import { compressToEncodedURIComponent } from 'lz-string';
 
 const MAX_NUMBER_OF_LINKS = 3;
 
@@ -64,10 +65,13 @@ const getFaviconFromServer = server$(async (url: string) => {
 });
 
 export const TemporaryLinks = component$(() => {
+  const location = useLocation();
   const toaster = useToaster();
   const links = useSignal<TempLink[]>([]);
   const input = useSignal('');
   const isInputDisabled = useSignal(false);
+  const isSecretNoteMode = useSignal(false);
+  const secretNote = useSignal('');
   const interactedLink = useSignal<TempLink | null>(null);
   const copiedLinkKey = useSignal<string>('');
   const newLinkLoading = useSignal(false);
@@ -75,9 +79,17 @@ export const TemporaryLinks = component$(() => {
   useVisibleTask$(() => {
     links.value = getLinksFromLocalStorage();
     isInputDisabled.value = links.value.length >= MAX_NUMBER_OF_LINKS;
+
+    if (location.url.searchParams.get('mode') === 'note') {
+      isSecretNoteMode.value = true;
+    }
   });
 
   const createTempLink = useTempLink();
+
+  const compressNote = $((text: string) => {
+    return compressToEncodedURIComponent(text);
+  });
 
   const deleteLink = $(async (idx: number) => {
     const newLinks = links.value.filter((_, index) => index !== idx);
@@ -132,14 +144,65 @@ export const TemporaryLinks = component$(() => {
     }
   });
 
+  const handleSecretNoteInput = $(async (e: QwikChangeEvent<HTMLTextAreaElement>) => {
+    const value = (e.target as HTMLTextAreaElement).value;
+    secretNote.value = value;
+
+    if (!value) {
+      input.value = '';
+      return;
+    }
+
+    const compressed = await compressNote(value);
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    input.value = `${origin}/note#${compressed}`;
+  });
+
   return (
     <>
       <QrCodeDialog link={{ key: interactedLink.value?.key }} />
       <div class="mx-auto w-full max-w-md px-2.5 sm:px-0 mb-8">
+        <div class="mb-3 flex justify-center gap-2">
+          <button
+            type="button"
+            class={`flex-1 rounded-full px-3 py-1 text-sm font-medium border ${
+              !isSecretNoteMode.value
+                ? 'bg-blue-600 text-white border-blue-600'
+                : 'bg-base-100 text-gray-700 dark:bg-slate-800 dark:text-gray-200 border-base-200'
+            }`}
+            onClick$={() => (isSecretNoteMode.value = false)}
+          >
+            Shorten URL
+          </button>
+          <button
+            type="button"
+            class={`flex-1 rounded-full px-3 py-1 text-sm font-medium border ${
+              isSecretNoteMode.value
+                ? 'bg-blue-600 text-white border-blue-600'
+                : 'bg-base-100 text-gray-700 dark:bg-slate-800 dark:text-gray-200 border-base-200'
+            }`}
+            onClick$={() => (isSecretNoteMode.value = true)}
+          >
+            Ephemeral Note
+          </button>
+        </div>
+
+        {isSecretNoteMode.value && (
+          <div class="mb-3">
+            <textarea
+              class="w-full rounded-md border border-base-200 bg-base-100 p-2.5 text-sm focus:outline-none dark:bg-slate-800"
+              rows={4}
+              placeholder="Type your secret note here..."
+              value={secretNote.value}
+              onInput$={handleSecretNoteInput}
+            />
+          </div>
+        )}
+
         <div
           class={`flex w-full items-center dark:bg-slate-800 rounded-md shadow-lg bg-base-100 border border-base-200 p-2 ${
             createTempLink.value?.message ? 'border border-red-500' : ''
-          } ${isInputDisabled.value ? 'bg-gray-200 cursor-not-allowed border-none' : ''}`}
+          } ${isInputDisabled.value && !isSecretNoteMode.value ? 'bg-gray-200 cursor-not-allowed border-none' : ''}`}
         >
           <input
             class="w-full p-2.5 text-sm focus:outline-none dark:bg-slate-800"
@@ -148,7 +211,8 @@ export const TemporaryLinks = component$(() => {
             value={input.value}
             onInput$={(e) => (input.value = (e.target as HTMLInputElement).value)}
             onKeyPress$={handleInputKeyPress}
-            disabled={isInputDisabled.value}
+            readOnly={isSecretNoteMode.value}
+            disabled={isInputDisabled.value && !isSecretNoteMode.value}
           />
           <button
             class={`rounded-full p-2.5 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-700 focus:outline-none focus:ring focus:border-gray-300 ml-2 ${

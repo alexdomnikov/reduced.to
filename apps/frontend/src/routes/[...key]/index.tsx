@@ -28,7 +28,8 @@ export const onGet: RequestHandler = async ({ params: { key }, query, redirect, 
       // If unauthorized, set the redirect target to the password page
       redirectTo = `/password/${key}`;
     } else if (res.status === 200 && data.url) {
-      redirectTo = data.url;
+      const url: string = data.url;
+      redirectTo = url.startsWith('http') ? url : `https://${url}`;
     } else if (res.status === 404) {
       throw new Error('Shortened URL is wrong or expired');
     } else {

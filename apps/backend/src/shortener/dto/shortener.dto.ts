@@ -2,7 +2,7 @@ import { IsBoolean, IsOptional, IsPositive, IsString, IsUrl, MaxLength, MinLengt
 
 export class ShortenerDto {
   @IsUrl(
-    { allow_fragments: true, require_protocol: false },
+    { allow_fragments: true, require_protocol: false, require_tld: false },
     {
       message: 'Url is invalid',
     }

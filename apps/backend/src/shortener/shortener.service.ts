@@ -1,7 +1,7 @@
 import { AppCacheService, LinkValue } from '../cache/cache.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { AppConfigService } from '@reduced.to/config';
-import { PrismaService } from '@reduced.to/prisma';
+import { Prisma, PrismaService } from '@reduced.to/prisma';
 import { ShortenerDto } from './dto';
 import { UserContext } from '../auth/interfaces/user-context';
 import { Link } from '@reduced.to/prisma';
@@ -44,6 +44,15 @@ export class ShortenerService {
    * @returns {boolean} Returns a boolean
    */
   isUrlAlreadyShortened = (url: string): boolean => {
+    try {
+      const parsed = new URL(url);
+      if (parsed.pathname.startsWith('/note')) {
+        return false;
+      }
+    } catch {
+      // If URL parsing fails here, fall back to regex check below.
+    }
+
     const domainRegex = new RegExp(this.appConfigService.getConfig().front.domain);
     return domainRegex.test(url);
   };
@@ -129,8 +138,22 @@ export class ShortenerService {
     if (password && shortenerDto.temporary) {
       throw new BadRequestException('Temporary links cannot be password protected');
     }
-    const [_, createdLink] = await Promise.all([this.usageService.incrementLinksCount(user.id), this.prisma.link.create({ data })]);
-    return createdLink;
+    try {
+      const [_, createdLink] = await Promise.all([this.usageService.incrementLinksCount(user.id), this.prisma.link.create({ data })]);
+      return createdLink;
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        const existing = await this.prisma.link.findUnique({
+          where: { key },
+        });
+
+        if (existing) {
+          return existing;
+        }
+      }
+
+      throw error;
+    }
   };
 
   /**
