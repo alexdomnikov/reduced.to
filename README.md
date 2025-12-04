@@ -30,7 +30,7 @@ The prompts in `/docs` are the final versions. Getting there required significan
 - [Ramp Process](docs/Ramp_Process_Illustrative_Prompts.pdf) — How I used AI to learn the codebase before building
 - [Architecture & GTM Strategy](docs/Reduced_To_Ephemeral_Notes.pdf) — System design decisions and go-to-market positioning
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">back to top</a>)</p><br>
 
 <!-- PROJECT SHIELDS -->
 <div align="center">
