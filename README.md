@@ -12,17 +12,23 @@
 
 Compress a message directly into a URL hash, shorten that URL through the existing pipeline, and let Redis TTL handle automatic expiration after 30 minutes. Zero permanent storage, zero database schema changes.
 
+In other words, this feature is **stateless at the application layer**: the note content is encoded entirely in the URL payload, so no new tables or note records are stored in the database. The only server-side state involved is the existing short URL → long URL mapping.
+
 ### What I Built (And How)
 
 **My contributions:**
 - **System design**: Recognized that existing Redis expiration logic could be repurposed for ephemeral messaging without touching the database layer
-- **Security considerations**: Illustrative (admittedly NOT comprehensive) XSS protection via plain-text rendering; clear documentation that lz-string is compression, not encryption
-- **GTM positioning**: Framed as a "professional-grade pastebin" for enterprise ephemeral collaboration
+- **Security considerations**: Added illustrative XSS protection via plain-text rendering; clear documentation that lz-string is compression, not encryption
+- **GTM positioning**: Created a short presentation for the feature, framing it as a “professional-grade pastebin” for enterprise ephemeral collaboration and outlining future premium upsell paths for monetization
 - **Test specification**: Unit tests for compression determinism with special characters
 
-**AI-assisted execution:** I didn't know TypeScript, Qwik, or NestJS when I started. I used Claude to learn the codebase architecture, understand Qwik's resumability model, and study NestJS patterns, then I engineered prompts that preemptively addressed framework-specific failure modes (e.g., QRL serialization errors, SSR hydration crashes, etc.).
+**AI-assisted execution:** I didn't know TypeScript, Qwik, or NestJS when I started. I used AI tools (Claude Code, OpenAI Codex, and Cursor) to: 
+- Learn the codebase architecture
+- Understand Qwik's resumability model
+- Study NestJS patterns
+- Iteratively engineer prompts that preemptively addressed framework-specific failure modes (e.g., QRL serialization errors, SSR hydration crashes, etc.).
 
-The prompts in `/docs` are the final versions. Getting there required significant iteration: hitting bugs, understanding why, refining my mental model, and restructuring prompts accordingly.
+The prompts in `/docs` are the final, cleaned-up versions after a lot of iteration: hitting bugs, understanding why they happened, updating my mental model, and refining the prompts and code accordingly.
 
 ### Documentation
 
@@ -39,8 +45,7 @@ The prompts in `/docs` are the final versions. Getting there required significan
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p><br><br>
 
-<h1 align="center">ORIGINAL REPO</h1>
-<br>
+<h1 align="center">ORIGINAL REPO</h1><br>
 
 <!-- PROJECT SHIELDS -->
 <div align="center">
