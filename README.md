@@ -30,6 +30,13 @@ The prompts in `/docs` are the final versions. Getting there required significan
 - [Ramp Process](docs/Ramp_Process_Illustrative_Prompts.pdf) — Sample prompts to show how I used AI to learn the codebase before building
 - [Architecture & GTM Strategy](docs/Reduced_To_Ephemeral_Notes.pdf) — System design decisions and go-to-market positioning
 
+### Try it Yourself!
+<a href="#-getting-started">See "🚀 Getting Started" to run it yourself!</a>
+
+
+### Demo
+<div align="center"><img src="docs/Ephemeral_Notes_Demo.gif" width="1000"></div><br>
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p><br><br>
 
 <h1 align="center">ORIGINAL REPO</h1>
