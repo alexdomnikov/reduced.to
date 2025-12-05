@@ -20,14 +20,14 @@ Compress a message directly into a URL hash, shorten that URL through the existi
 - **GTM positioning**: Framed as a "professional-grade pastebin" for enterprise ephemeral collaboration
 - **Test specification**: Unit tests for compression determinism with special characters
 
-**AI-assisted execution:** I didn't know TypeScript, Qwik, or NestJS when I started. I used Claude to learn the codebase architecture, understand Qwik's resumability model, and study NestJS patterns—then engineered prompts that preemptively addressed framework-specific failure modes (QRL serialization errors, SSR hydration crashes).
+**AI-assisted execution:** I didn't know TypeScript, Qwik, or NestJS when I started. I used Claude to learn the codebase architecture, understand Qwik's resumability model, and study NestJS patterns, then I engineered prompts that preemptively addressed framework-specific failure modes (e.g., QRL serialization errors, SSR hydration crashes, etc.).
 
 The prompts in `/docs` are the final versions. Getting there required significant iteration: hitting bugs, understanding why, refining my mental model, and restructuring prompts accordingly.
 
 ### Documentation
 
 - [Implementation Prompts](docs/Demo_Build_Prompts.pdf) — The structured prompts used to build each component
-- [Ramp Process](docs/Ramp_Process_Illustrative_Prompts.pdf) — How I used AI to learn the codebase before building
+- [Ramp Process](docs/Ramp_Process_Illustrative_Prompts.pdf) — Sample prompts to show how I used AI to learn the codebase before building
 - [Architecture & GTM Strategy](docs/Reduced_To_Ephemeral_Notes.pdf) — System design decisions and go-to-market positioning
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p><br>
